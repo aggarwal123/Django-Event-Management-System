@@ -1,0 +1,49 @@
+﻿{% extends "events/base.html" %}
+{% block title %}Home Page{% endblock %}
+{% block content %}
+<center>
+    <h1>Events in {{ month }}, {{ year }}</h1>
+
+    {{ cal|safe }} <!-- | is called filter -->
+
+</center>
+<br>
+{% if events %}
+
+<table class="table table-hover table-bordered">
+    <thead class="table table-dark">
+        <tr>
+            <th scope="col">Name</th>
+            <th scope="col">Date</th>
+            <th scope="col">Status</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for event in events %}
+        <tr style="height: 3em;">
+            <td><strong><a href="{% url 'show-event' event.id %}" class="link-dark">{{ event }}</a></strong></td>
+            <td>{{ event.event_date }}</td>
+            {% if event.event_date|date:"Y-m-d" < datetime.date|date:"Y-m-d" %} <td class="link-danger"><b>Finished</b>
+                </td>
+                {% elif event.event_date|date:"Y-m-d" > datetime.date|date:"Y-m-d" %}
+                <td class="link-success"><b>Upcoming</b></td>
+                {% else %}
+                {% if event.event_date.time|time:"H:i:s" > datetime.time|time:"H:i:s" %} <td class="link-success">
+                    <b>Upcoming</b>
+                </td>
+                {% else %}
+                <td class="link-danger"><b>Finished</b></td>
+                {% endif %}
+                {% endif %}
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<center>
+    <h5 class="link-danger">There are no Events this Month.</h5>
+</center>
+{% endif %}
+
+<br><br>
+{% endblock %}
